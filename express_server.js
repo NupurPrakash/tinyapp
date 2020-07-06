@@ -31,6 +31,11 @@ app.get("/fetch", (req, res) => {
   res.send(`a = ${a}`);
 });
 
+app.get("/urls", (req, res) => {
+  let templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT} !`);
 });
