@@ -1,7 +1,18 @@
 const express = require("express");
 const PORT = 8080;
 const app = express();
-const bodyParser = require("body-parser")
+const bodyParser = require("body-parser");
+
+function generateRandomString() {
+  let url = "";
+  let randomString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let length = 6;
+  for (let i = 0 ; i < length; i++) {
+    url += chars.charAt(Math.floor(Math.random() * randomString.length));
+    return url;
+  }
+
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
