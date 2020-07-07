@@ -12,14 +12,16 @@
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
     <h3>My URLs</h3>
-    <form method="POST" action="/urls/9sm5xK/delete">
     
     <table class="table">
       <thead>
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+          <th scope="col">Edit</th>
           <th scope="col">Delete</th>
+
+
         </tr>
       </thead>
       <tbody>
@@ -27,13 +29,24 @@
           <tr>
             <td><%= url %></td>
             <td><%= urls[url] %></td>
-            <td><button type="submit" class="btn btn-primary">Delete</button></td>
+            <td>
+              <form method="GET" action =<%= `urls/${url}` %>>
+              <button type="submit" class="btn btn-primary">Edit</button>
+                        </form>
+            </td>
+            <td>
+              <form method="POST" action= <%= `/urls/${url}/delete` %> >
+
+              <button type="submit" class="btn btn-primary">Delete</button>
+            </form>
+            </td>
 
           </tr>
         <% } %>
+           
       </tbody>
     </table>
-    </form>
+    
   
   </main>
   <!-- Bootstrap JS -->
