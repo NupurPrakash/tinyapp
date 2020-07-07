@@ -5,14 +5,11 @@ const bodyParser = require("body-parser");
 
 function generateRandomString() {
   let url = "";
-  let randomString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let length = 6;
-  for (let i = 0 ; i < length; i++) {
-    url += chars.charAt(Math.floor(Math.random() * randomString.length));
-    return url;
+  url += Math.random().toString(36).slice(2).slice(0, 6);
+  return url;
   }
 
-}
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -60,8 +57,14 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  let shortURL = generateRandomString();
+  let longURL = req.body.longURL;
+  urlDatabase[shortURL] = longURL;
   console.log(req.body);
-  res.send("Ok");
+  console.log(longURL);
+  console.log(shortURL);
+  console.log(urlDatabase);
+  res.send("Responding with a redirect");
 });
 
 app.listen(PORT, () => {
