@@ -16,6 +16,16 @@ function generateRandomString() {
   return url;
   }
 
+  function findUserByEmail(email) {
+    for (let userId in users) {
+      if (users[userId].email === email) {
+        return users[userId];
+      }
+    }
+    return false;
+    
+  }
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -43,24 +53,34 @@ app.get('/register', (req, res) => {
     res.redirect('/urls');
     return;
   } 
-  const userObj = users[userId];
+  //const userObj = users[userId];
   let templateVars = { userId : users[userId] }  ;
   res.render('register', templateVars);
   
 });
 
 app.post('/register', (req, res) => {
-  //add new user to users obj(id,email,password)
-  //set user_id cookie
-  //redirect /urls
-  //test users
-  //test user_id
-  let userId = generateRandomString();
-  console.log("userId", userId);
-  users[userId] = { id : userId, email : req.body.email, password : req.body.password};
-  console.log("Obj",users);
-  res.cookie('userId', userId);
-  res.redirect('/urls');
+  const email = req.body.email;
+  const password = req.body.password;
+
+  //if no email and password
+  if (email === '' || password === '') {
+    res.status(400).send('Error: Input email id and password');
+  }
+  //if email already exists
+  const user = findUserByEmail(email);
+  if(user) {
+    res.status(401).send('Error! Email already exists');
+  } else {
+
+    let userId = generateRandomString();
+    console.log("userId", userId);
+    users[userId] = { id : userId, email : req.body.email, password : req.body.password};
+    console.log("Obj",users);
+    res.cookie('userId', userId);
+    res.redirect('/urls');
+  }
+  
 
 });
 
