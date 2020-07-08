@@ -38,7 +38,15 @@ const users = {
 //Registering user
 
 app.get('/register', (req, res) => {
-  res.render('register');
+  const userId = req.cookies["userId"];
+  if (userId) {
+    res.redirect('/urls');
+    return;
+  } 
+  const userObj = users[userId];
+  let templateVars = { userId : users[userId] }  ;
+  res.render('register', templateVars);
+  
 });
 
 app.post('/register', (req, res) => {
@@ -49,9 +57,8 @@ app.post('/register', (req, res) => {
   //test user_id
   let userId = generateRandomString();
   console.log("userId", userId);
-  //res.json(req.body.id) = userId;
   users[userId] = { id : userId, email : req.body.email, password : req.body.password};
-  console.log(users);
+  console.log("Obj",users);
   res.cookie('userId', userId);
   res.redirect('/urls');
 
@@ -66,7 +73,7 @@ app.post("/login", (req, res) => {
   //check email and password match
   //set user id in the cookie
   //res.redirect
-  res.cookie('username', req.body.username);
+  res.cookie('userId', req.body.username);
   res.redirect('/urls');
 
 });
@@ -94,12 +101,12 @@ app.get("/fetch", (req, res) => {
 
 app.get("/urls", (req, res) => {
   //let templateVars = { urls: urlDatabase };
-  let templateVars = {  urls: urlDatabase, username : req.cookies["username"] }
+  let templateVars = {  urls: urlDatabase, userId : req.cookies["userId"] }
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  let templateVars = {  username : req.cookies["username"] }
+  let templateVars = {  userId : req.cookies["userId"] }
 
   res.render("urls_new", templateVars);
 });
@@ -114,7 +121,7 @@ app.post("/urls", (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"]  };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], userId : req.cookies["userId"]  };
   res.render("urls_show", templateVars);
 });
 
@@ -136,7 +143,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('userId', { path: "/"});
   res.redirect('/urls');
 });
 
