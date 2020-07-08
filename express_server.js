@@ -22,8 +22,50 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+};
+
+//Registering user
+
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+
+app.post('/register', (req, res) => {
+  //add new user to users obj(id,email,password)
+  //set user_id cookie
+  //redirect /urls
+  //test users
+  //test user_id
+  let userId = generateRandomString();
+  console.log("userId", userId);
+  //res.json(req.body.id) = userId;
+  users[userId] = { id : userId, email : req.body.email, password : req.body.password};
+  console.log(users);
+  res.cookie('userId', userId);
+  res.redirect('/urls');
+
+});
+
+
+
 
 app.post("/login", (req, res) => {
+  //extract user info from req body
+  //does the user with that email exist
+  //check email and password match
+  //set user id in the cookie
+  //res.redirect
   res.cookie('username', req.body.username);
   res.redirect('/urls');
 
