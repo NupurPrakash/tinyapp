@@ -29,12 +29,25 @@ const findUserByEmail = (email) => {
 
 //********** Validating user's email and password **************/
 const validateUser = (email, password) => {
-    const user = findUserByEmail(email);
-    if (user && user.password === password) {
-      return user.id;
+  const user = findUserByEmail(email);
+  if (user && user.password === password) {
+    return user.id;
+  }
+  return false;
+};
+
+
+//************* To return URL for the loggedin user *********************/
+const urlsForUser = (id, urlDatabase) => {
+  const forUsers = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      forUsers[shortURL] = urlDatabase[shortURL];
     }
-    return false;
-  };
+  }
+  return forUsers;
+};
+
 
 /*
 const urlDatabase = {
@@ -142,7 +155,7 @@ app.get("/fetch", (req, res) => {
 //************ Get handler for '/urls' ********************/
 
 app.get("/urls", (req, res) => {
-  let templateVars = {  urls: urlDatabase, userId : req.cookies["userId"] }
+  let templateVars = {  urls: urlsForUser(req.cookies["userId"], urlDatabase), userId : req.cookies["userId"] };
   res.render("urls_index", templateVars);
 });
 
@@ -152,18 +165,22 @@ app.get("/urls/new", (req, res) => {
   if(!userId) {
     res.redirect('/login');  //the page will  be accessed only after login
   } else {
-    let templateVars = {  userId : req.cookies["userId"] }
+    let templateVars = {  userId : req.cookies["userId"] };
     res.render("urls_new", templateVars);
   }
 });
 
 //************* Post handler for '/urls' *****************/
 app.post("/urls", (req, res) => {
-  let shortURL = generateRandomString();
-  //let longURL = req.body.longURL;
-  urlDatabase[shortURL] = { longURL: req.body.longURL, userID : req.cookies["userId"] };
-  res.redirect(`/urls/${shortURL}`);
-  console.log("Database:",urlDatabase);
+  const userId = req.cookies["userId"]; 
+  if (userId) {
+    let shortURL = generateRandomString();
+    urlDatabase[shortURL] = { longURL: req.body.longURL, userID : req.cookies["userId"] };
+    res.redirect(`/urls/${shortURL}`);
+    console.log("Database:",urlDatabase);
+  } else {
+    res.status(401).send('You must be logged in to see the urls');
+  }
 });
 
 //************* Get handler for '/urls/:shortURL' *****************/
@@ -174,8 +191,15 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //************* Post handler for '/urls/:shortURL' *****************/
 app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
-  res.redirect('/urls');
+  const userId = req.cookies["user_id"];
+  const userUrls = urlsForUser(userId, urlDatabase);
+  if (Object.keys(userUrls).includes(req.params.id)) {
+    const shortURL = req.params.id;
+    urlDatabase[shortURL].longURL = req.body.newURL;
+    res.redirect('/urls');
+  } else {
+    res.status(400).send('You can\'t edit this url');
+  }
 });
 
 //************* Get handler for '/u/:shortURL' *****************/
@@ -186,8 +210,15 @@ app.get("/u/:shortURL", (req, res) => {
 
 //************* Post handler for '/urls/:shortURL/delete' *****************/
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls/');
+  const userId = req.cookies["user_id"];
+  const userUrls = urlsForUser(userId, urlDatabase);
+  if (Object.keys(userUrls).includes(req.params.shortURL)) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls/');
+  } else {
+    res.status(400).send('You can\'t delete this url');
+  }
+  
 });
 
 //************* Post handler for '/logout' *****************/

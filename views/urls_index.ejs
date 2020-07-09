@@ -28,7 +28,13 @@
         </tr>
       </thead>
       <tbody>
-        <% for(let url in urls) { %>
+        <% if (!userId) { %>
+          <div class="alert alert-warning" role="alert">
+            Please <a href='/login' class='alert-link'>Login</a> / <a href="/register" class="alert-link">Register</a> to continue !
+          </div>
+          <% } else { %>
+
+            <% for(let url in urls) { %>
           <tr>
             <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
@@ -39,12 +45,12 @@
             </td>
             <td>
               <form method="POST" action= <%= `/urls/${url}/delete` %> >
-
               <button type="submit" class="btn btn-primary">Delete</button>
             </form>
             </td>
 
           </tr>
+        <% } %>
         <% } %>
            
       </tbody>
