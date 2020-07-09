@@ -2,7 +2,10 @@ const express = require("express");
 const PORT = 8080;
 const app = express();
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -30,8 +33,8 @@ const findUserByEmail = (email) => {
 //********** Validating user's email and password **************/
 const validateUser = (email, password) => {
   const user = findUserByEmail(email);
-  if (user && user.password === password) {
-    return user.id;
+  if (user && bcrypt.compareSync(password, user.password)) {
+    return user;
   }
   return false;
 };
@@ -60,12 +63,12 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", saltRounds)
   }
 };
 
@@ -107,11 +110,11 @@ app.post('/register', (req, res) => {
   if(user) {
     res.status(401).send('Error! Email already exists');
   } else {
-    let userId = generateRandomString();
-    console.log("userId", userId);
-    users[userId] = { id : userId, email : req.body.email, password : req.body.password};
+    let newUserId = generateRandomString();
+    console.log("userId", newUserId);
+    users[newUserId] = { id : newUserId, email : req.body.email, password : bcrypt.hashSync(req.body.password, 10) };
     console.log("Obj",users);
-    res.cookie('userId', userId);
+    res.cookie('userId', newUserId);
     res.redirect('/urls');
   }
 });
@@ -122,7 +125,7 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   const user = validateUser(email, password);
   if(!user) {
-    res.status(403).send('Error! Please register to login');
+    res.status(401).send('Wrong Credentials! Please register to login');
   } else {
   res.cookie('userId', user);
   res.redirect('/urls');
