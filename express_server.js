@@ -193,8 +193,8 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const userId = req.cookies["user_id"];
   const userUrls = urlsForUser(userId, urlDatabase);
-  if (Object.keys(userUrls).includes(req.params.id)) {
-    const shortURL = req.params.id;
+  if (Object.keys(userUrls).includes(req.params.shortURL)) { 
+    const shortURL = req.params.shortURL;
     urlDatabase[shortURL].longURL = req.body.newURL;
     res.redirect('/urls');
   } else {
