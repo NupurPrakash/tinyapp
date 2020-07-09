@@ -10,10 +10,28 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
+   <!-- <p> <a href="/urls/new">Create new tiny URL </a> | <a href="/urls">TinyURLS</a> </p> -->
+
+    <% if (!userId) { %>
+
+      <form action="/register" method="GET" style="display: flex">
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <form action="/login" method="GET" style="display: flex">
+      <button type="submit" class="btn btn-primary">Login</button>
+  </form>
+    <% } else { %>
+      <form action="/logout" method="POST" style="display: flex">
+        <p><h4>Logged in as: <%=userId %></h4></p>
+        <button type="submit" class="btn btn-primary">Logout</button>
+        </form>
+    <% } %>
+    
+<!--
     <% if (!userId) { %>
 
       <form action="/login" method="POST" style="display: flex">
-        <p>Username : <input class="form-control" type="text" name="username" placeholder="Username" style="width: 200px "></p>
+        <input class="form-control" type="text" name="username" placeholder="Username" style="width: 200px "></p>
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
     <% } else { %> 
@@ -23,6 +41,7 @@
           <button type="submit" class="btn btn-primary">logout</button>
       </form>
       <% } %>
+    -->
 
   </nav>
 </header>
