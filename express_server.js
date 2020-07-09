@@ -36,12 +36,13 @@ const validateUser = (email, password) => {
     return false;
   };
 
-
+/*
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-
+*/
+const urlDatabase = { };
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -159,10 +160,10 @@ app.get("/urls/new", (req, res) => {
 //************* Post handler for '/urls' *****************/
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
-  let longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL
+  //let longURL = req.body.longURL;
+  urlDatabase[shortURL] = { longURL: req.body.longURL, userID : req.cookies["userId"] };
   res.redirect(`/urls/${shortURL}`);
-  //console.log(urlDatabase);
+  console.log("Database:",urlDatabase);
 });
 
 //************* Get handler for '/urls/:shortURL' *****************/
