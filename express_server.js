@@ -108,10 +108,11 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   const user = validateUser(email, password);
   if(!user) {
-    res.status(403).send('Error! Check your credentials');
+    res.status(403).send('Error! Please register to login');
   } else {
   res.cookie('userId', user);
   res.redirect('/urls');
+  console.log("Users:",users);
   }
 
 });
@@ -156,6 +157,7 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL
   res.redirect(`/urls/${shortURL}`);
+  //console.log(urlDatabase);
 });
 
 //************* Get handler for '/urls/:shortURL' *****************/
