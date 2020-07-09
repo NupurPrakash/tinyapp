@@ -147,8 +147,13 @@ app.get("/urls", (req, res) => {
 
 //*********** Get handler for '/urls/new' *****************/
 app.get("/urls/new", (req, res) => {
-  let templateVars = {  userId : req.cookies["userId"] }
-  res.render("urls_new", templateVars);
+  const userId = req.cookies["userId"]; 
+  if(!userId) {
+    res.redirect('/login');  //the page will  be accessed only after login
+  } else {
+    let templateVars = {  userId : req.cookies["userId"] }
+    res.render("urls_new", templateVars);
+  }
 });
 
 //************* Post handler for '/urls' *****************/
