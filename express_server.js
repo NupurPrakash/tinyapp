@@ -4,7 +4,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const cookieSession = require("cookie-session");
-
+//const { generateRandomString, findUserByEmail, validateUserId, urlsForUser, findUser } = require("./helpers");
+const { findUserByEmail, generateRandomString } = require('./helpers');
 const saltRounds = 10;
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -20,6 +21,8 @@ app.use((req, res, next) => {
 
 
 app.set("view engine", "ejs");
+
+
 
 //*********** URL Database*****************/
 
@@ -42,8 +45,7 @@ const users = {
   }
 };
 
-
-//*********** to add new user to database ******************/
+/*********** to add new user to database ******************/
 const addNewUser = (email, password) => {
   const userId = generateRandomString();
   const newUser = {
@@ -54,24 +56,10 @@ const addNewUser = (email, password) => {
   users[userId] = newUser;
   return userId;
 };
+ 
 
 
-//********* Generating random string  for short url *********/
-const generateRandomString = () => {
-  let url = "";
-  url += Math.random().toString(36).slice(2).slice(0, 6);
-  return url;
-};
 
-//********** to return registered user ******************* */
-const findUserByEmail = (email, users) => {
-  for (let user in users) {
-    if (users[user].email === email) {
-      return users[user];
-    }
-  }
-  return false;
-};
 
 //*********** to authenticate user's email and password *******/
 const validateUserId = function(email, password) {
