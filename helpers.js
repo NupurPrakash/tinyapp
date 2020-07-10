@@ -16,5 +16,4 @@ const generateRandomString = () => {
 };
 
 
-
 module.exports = { findUserByEmail, generateRandomString  };
