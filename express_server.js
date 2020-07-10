@@ -45,6 +45,16 @@ const users = {
   }
 };
 
+//*********** to authenticate user's email and password *******/
+const validateUserId = function(email, password) {
+  const user = findUserByEmail(email, users);
+  if (user && bcrypt.compareSync(password, user.password)) {
+    return user.id;
+  } else {
+    return false;
+  }
+};
+
 /*********** to add new user to database ******************/
 const addNewUser = (email, password) => {
   const userId = generateRandomString();
@@ -56,21 +66,6 @@ const addNewUser = (email, password) => {
   users[userId] = newUser;
   return userId;
 };
- 
-
-
-
-
-//*********** to authenticate user's email and password *******/
-const validateUserId = function(email, password) {
-  const user = findUserByEmail(email, users);
-  if (user && bcrypt.compareSync(password, user.password)) {
-    return user.id;
-  } else {
-    return false;
-  }
-};
-
 
 //************* To return URL for the loggedin user *********************/
 const urlsForUser = (id) => {
