@@ -12,36 +12,21 @@
     </div>
    <!-- <p> <a href="/urls/new">Create new tiny URL </a> | <a href="/urls">TinyURLS</a> </p> -->
 
-    <% if (!userId) { %>
+    <% if (!user) { %>
 
-      <form action="/register" method="GET" style="display: flex">
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-    <form action="/login" method="GET" style="display: flex">
-      <button type="submit" class="btn btn-primary">Login</button>
-  </form>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="/login" style="margin: 1em">Login</a>
+          <a class="nav-item nav-link" href="/register" style="margin: 1em">Register</a>
+        </div>
+      </div>
     <% } else { %>
       <form action="/logout" method="POST" style="display: flex">
-        <p><h4>Logged in as: <%=userId %></h4></p>
+        <label>Logged in as: <%= user.email %></label>
         <button type="submit" class="btn btn-primary">Logout</button>
         </form>
     <% } %>
     
-<!--
-    <% if (!userId) { %>
-
-      <form action="/login" method="POST" style="display: flex">
-        <input class="form-control" type="text" name="username" placeholder="Username" style="width: 200px "></p>
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <% } else { %> 
-
-      <form action="/logout" method="POST" style="display: flex">
-        <p><h4>Logged in as: <%=userId %></h4></p>
-          <button type="submit" class="btn btn-primary">logout</button>
-      </form>
-      <% } %>
-    -->
 
   </nav>
 </header>
