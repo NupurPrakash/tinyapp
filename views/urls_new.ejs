@@ -7,12 +7,12 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>New URL - TinyApp Example</title>
+    <title>New URL - TinyApp</title>
   </head>
 
   <body>
     <header>
-      <%- include('partials/_header') %>
+      <%- include (`./partials/_header`) %>
     </header>
 
     <main style="margin: 1em;">
@@ -21,7 +21,7 @@
         <div class="form-group mb-2">
           <label for="longURL">Enter a URL:</label>
           <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-          <button type="submit" >Submit</button>
+          <button type="submit" >Create</button>
         </div>
       </form>
     </main>

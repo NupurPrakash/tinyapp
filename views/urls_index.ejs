@@ -1,66 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>TinyApp</title>
+<!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>TinyApp</title>
 </head>
-<body>
-  <header>
-    <%- include('partials/_header') %>
-  </header>
-
-  <main style="margin: 1em;">
-    <h3>My URLs</h3>
-    
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Short URL</th>
-          <th scope="col">Long URL</th>
-          <th scope="col">Edit</th>
-          <th scope="col">Delete</th>
-
-
-        </tr>
-      </thead>
-      <tbody>
-        <% if (!userId) { %>
-          <div class="alert alert-warning" role="alert">
-            Please <a href='/login' class='alert-link'>Login</a> / <a href="/register" class="alert-link">Register</a> to continue !
-          </div>
-          <% } else { %>
-
+<body style="font-size:20px; padding:50px;">
+    <%- include (`./partials/_header`) %>
+    <!-- delete and POST method in form -->
+    <main style="margin: 1em;">
+        <h3>My URLs</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Short URL</th>
+              <th scope="col">Long URL</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!user) { %>
+              <div class="alert alert-warning" role="alert">
+                  Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to see your Short URLs.
+              </div>
+            <% } else { %>
             <% for(let url in urls) { %>
-          <tr>
-            <td><%= url %></td>
-            <td><%= urls[url].longURL %></td>
-            <td>
-              <form method="GET" action = <%= `urls/${url}` %>>
-              <button type="submit" class="btn btn-primary">Edit</button>
-              </form>
-            </td>
-            <td>
-              <form method="POST" action= <%= `/urls/${url}/delete` %> >
-              <button type="submit" class="btn btn-primary">Delete</button>
-            </form>
-            </td>
-
-          </tr>
+            <tr>
+              <td><%= url %></td>
+              <td><%= urls[url].longURL %></td>
+              <td>
+                <a href="/urls/<%= url %>">
+                  <button type="button" class="btn btn-outline-primary">Edit</button>
+                </a>
+              </td>
+              <td>
+                <form method="POST" action="/urls/<%= url %>/delete">
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% } %>
+            <% } %>
+          </tbody>
+        </table>
+        <% if (user) { %>
+          <div class="alert alert-info" role="alert">
+            Create a <a href="/urls/new" class="alert-info"><b>New Short URL</b></a>
+          </div>
         <% } %>
-        <% } %>
-           
-      </tbody>
-    </table>
-    
-  
-  </main>
-  <!-- Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      </main>
 </body>
 </html>

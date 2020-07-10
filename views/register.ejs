@@ -7,7 +7,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-    <title>New URL - TinyApp Example</title>
+    <title>TinyApp Registration</title>
   </head>
 
   <body>
@@ -17,32 +17,17 @@
     
 
   <body style='font-size: 20px; padding: 50px;'>
-    <p><h1>Register</h1></p>
+    <h3>Create an account</h3>
     <form method="POST" action='/register'>
-      <table>		
-        <tr>			
-            <td>				
-                Email:			
-            </td>			
-             <td>				
-                <input type='email' name="email" placeholder="Enter email"/>			
-             </td>		
-        </tr>
-         <tr>
-              <td>				
-                Password:			
-              </td>			
-              <td>				
-               <input type='password' name="password" placeholder="Enter password"/>		
-              </td>		
-        </tr>	
-  </table>
-
-
-      <button type="submit" class='btn btn-primary' display='block'>Register</button>
-
-    
-    </form>
-
+      <div class="form-group mb-2">
+        <label for="email">Email ID:</label>
+        <input class="form-control" type="email" name="email" placeholder="Enter Email" style="width: 250px">
+      </div>
+      <div class="form-group mb-2">
+        <label for="password">Password:</label>
+        <input class="form-control" type="password" name="password" placeholder="Password" style="width: 250px">
+      </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+      </form>
   </body>
 </html>
