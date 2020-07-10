@@ -29,16 +29,16 @@ const urlDatabase = {
 };
 
 //************ users Database ************************/
-const users = { 
+const users = {
   "userRandomID": {
     id: "userRandomID",
-    email: "user@example.com", 
+    email: "user@example.com",
     password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
   },
- "user2RandomID": {
-   id: "user2RandomID", 
-   email: "user2@example.com", 
-   password: bcrypt.hashSync("dishwasher-funk", saltRounds)
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: bcrypt.hashSync("dishwasher-funk", saltRounds)
   }
 };
 
@@ -97,9 +97,9 @@ const urlsForUser = (id) => {
 };
 
 //********** Validating user from database *******************************/
-const findUser = (user_id) => {
+const findUser = (userId) => {
   for (let user in users) {
-    if (user_id === user) {
+    if (userId === user) {
       return users[user];
     }
   }
@@ -139,7 +139,7 @@ app.post("/register", (req, res) => {
   }
 
   //if email already exists
-  if(findUserByEmail(inputtedEmail, users)) {
+  if (findUserByEmail(inputtedEmail, users)) {
     res.status(400).send("The user is already registered");
   } else {
     let newUserId = addNewUser(inputtedEmail, inputtedPassword);
@@ -155,7 +155,7 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   const userId = validateUserId(email, password);
 
-   //if no email and password
+  //if no email and password
   if (email === "" || password === "") {
     res.status(400).send("Please enter your credentials");
   }
@@ -183,18 +183,18 @@ app.get("/hello", (req, res) => {
 //************ Get handler for /urls ********************/
 
 app.get("/urls", (req, res) => {
-  if(req.session.user_id){
+  if (req.session.user_id) {
     let userId = req.session["user_id"];
     // let userLogged = users[userId];
     //console.log(`sess: ${JSON.stringify(req.session)},${JSON.stringify(urlsForUser(req.session["user_id"]))}`)
 
     if (userId) {
-      let templateVars = {  
-        urls: urlsForUser(userId), 
+      let templateVars = {
+        urls: urlsForUser(userId),
         user : findUser(userId)
       };
       res.render("urls_index", templateVars);
-    } 
+    }
   } else {
     res.render("urls_index", { user: false });
   }
@@ -206,7 +206,7 @@ app.get("/urls/new", (req, res) => {
   const userId = req.session["user_id"];
   const userLogged = users[userId];
 
-  if(userId) {
+  if (userId) {
     let templateVars = { user: userLogged };
     res.render("urls_new", templateVars);
   } else {
@@ -228,9 +228,9 @@ app.get("/urls/:shortURL", (req, res) => {
  
   let userId = req.session["user_id"];
   let userLogged = users[userId];
-  let templateVars = { 
-    shortURL: req.params.shortURL, 
-    longURL: urlDatabase[req.params.shortURL].longURL, 
+  let templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user : userLogged  };
   res.render("urls_show", templateVars);
  
@@ -240,12 +240,12 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const userId = req.session["user_id"];
   const userUrls = urlsForUser(userId, urlDatabase);
-  if (Object.keys(userUrls).includes(req.params.shortURL)) { 
+  if (Object.keys(userUrls).includes(req.params.shortURL)) {
     const shortURL = req.params.shortURL;
-    urlDatabase[shortURL].longURL = req.body.newURL;
+    urlDatabase[shortURL].longURL = req.body.longURL;
     res.redirect("/urls");
   } else {
-    res.status(401).send("You can\'t edit this url");
+    res.status(401).send("You can't edit this url");
   }
 });
 
@@ -267,7 +267,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls/");
   } else {
-    res.status(401).send("You can\'t delete this url");
+    res.status(401).send("You can't delete this url");
   }
 });
 
