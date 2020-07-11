@@ -4,7 +4,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const cookieSession = require("cookie-session");
-//const { generateRandomString, findUserByEmail, validateUserId, urlsForUser, findUser } = require("./helpers");
 const { findUserByEmail, generateRandomString } = require('./helpers');
 const saltRounds = 10;
 
@@ -93,7 +92,14 @@ const findUser = (userId) => {
 //************* Get handler for the root ***************/
 
 app.get("/", (req, res) => {
-  res.send("Welcome to Tiny App!");
+  const userId = req.session["user_id"];
+
+  //if user is logged in, go to /urls page. If not, login
+  if (userId) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 //************ Get handler for Register ***************/
@@ -106,6 +112,7 @@ app.get("/register", (req, res) => {
 });
 
 //*********** Get handler for login *****************/
+
 app.get("/login", (req, res) => {
   const templateVars = { user: null };
   res.render("login", templateVars);
@@ -113,6 +120,7 @@ app.get("/login", (req, res) => {
 
 
 //************* Post handler for register ****************/
+
 app.post("/register", (req, res) => {
   const inputtedEmail = req.body.email;
   const inputtedPassword = req.body.password;
@@ -120,7 +128,6 @@ app.post("/register", (req, res) => {
   if (inputtedEmail === "" || inputtedPassword === "") {
     res.status(400).send("Please enter valid credentials");
   }
-
   //if email already exists
   if (findUserByEmail(inputtedEmail, users)) {
     res.status(400).send("The user is already registered");
@@ -133,20 +140,22 @@ app.post("/register", (req, res) => {
 });
 
 //************* Post handler for login *********************/
+
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const userId = validateUserId(email, password);
 
-  //if no email and password
+  //checking if no email and password fields are blank, and if the user is unregistered and also for invalid passwords.
   if (email === "" || password === "") {
     res.status(400).send("Please enter your credentials");
-  }
-  if (userId) {
+  } else if (!findUserByEmail(email, users)) {
+    res.status(403).send("Pleast register to continue!");
+  } else if (userId) {
     req.session["user_id"] = userId;
     res.redirect("/urls");
-  } else {
-    res.status(403).send("No account registered for the email. Register first");
+  }  else {
+    res.status(403).send("Wrong Credentials!");
   }
  
 });
@@ -168,9 +177,6 @@ app.get("/hello", (req, res) => {
 app.get("/urls", (req, res) => {
   if (req.session.user_id) {
     let userId = req.session["user_id"];
-    // let userLogged = users[userId];
-    //console.log(`sess: ${JSON.stringify(req.session)},${JSON.stringify(urlsForUser(req.session["user_id"]))}`)
-
     if (userId) {
       let templateVars = {
         urls: urlsForUser(userId),
@@ -181,14 +187,14 @@ app.get("/urls", (req, res) => {
   } else {
     res.render("urls_index", { user: false });
   }
-  
 });
 
 //*********** Get handler for /urls/new *****************/
+
 app.get("/urls/new", (req, res) => {
   const userId = req.session["user_id"];
   const userLogged = users[userId];
-
+  //if user is logged in, create new url page will be rendered
   if (userId) {
     let templateVars = { user: userLogged };
     res.render("urls_new", templateVars);
@@ -198,28 +204,34 @@ app.get("/urls/new", (req, res) => {
 });
 
 //************* Post handler for /urls *****************/
+
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = { longURL: req.body.longURL, userID : req.session["user_id"] };
   res.redirect(`/urls/${shortURL}`);
-  // console.log("Database:",urlDatabase);
   
 });
 
 //************* Get handler for /urls/:shortURL *****************/
+
 app.get("/urls/:shortURL", (req, res) => {
- 
   let userId = req.session["user_id"];
   let userLogged = users[userId];
-  let templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    user : userLogged  };
-  res.render("urls_show", templateVars);
- 
+  if (urlDatabase[req.params.shortURL]) {
+    let templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+      user : userLogged,
+      urlID : urlDatabase[req.params.shortURL].userID
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.status(404).send('This short Url does not have a corresponding long Url');
+  }
 });
 
 //************* Post handler for /urls/:shortURL *****************/
+
 app.post("/urls/:shortURL", (req, res) => {
   const userId = req.session["user_id"];
   const userUrls = urlsForUser(userId, urlDatabase);
@@ -233,9 +245,12 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 //************* Get handler for /u/:shortURL *****************/
+
 app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[req.params.shortURL]) {
-    let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL].longURL };
+    let templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL };
     res.redirect(templateVars.longURL);
   } else {
     res.status(400).send("Enter a valid URL");
@@ -243,6 +258,7 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 //************* Post handler for /urls/:shortURL/delete *****************/
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userId = req.session["user_id"];
   const userUrls = urlsForUser(userId, urlDatabase);
@@ -255,12 +271,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 //************* Post handler for /logout *****************/
+
 app.post("/logout", (req, res) => {
   req.session["user_id"] = null;
   res.redirect("/urls");
 });
 
-//******************* Calling the server ********************* */
+//******************* starting the server ********************* */
+
 app.listen(PORT, () => {
   console.log(`Tiny app listening on port ${PORT} !`);
 });
