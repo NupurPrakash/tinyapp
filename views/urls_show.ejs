@@ -19,7 +19,11 @@
               This link is not registered for your account.
               Please <a href="/login" class="alert-link">login</a> or <a href="/register" class="alert-link">register</a> to view your Short URLs.
           </div>
-        <% } %>
+        <% } else if (user.id !== urlID) {%>
+          <div class="alert" alert-warning" role="alert">
+            This shortUrl does not belong to the logged in user.
+          </div>
+          <%} %>
       
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>" target="_blank"><%= shortURL %></a></p>
